@@ -16,25 +16,43 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm bg-light navbar-light">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                @Html.ActionLink("Финансов калкулатор", "FinanceCalculator", "Home", null, new { @class = "nav-link" })                
-            </li>
-            <li class="nav-item">                
-                @Html.ActionLink("Калкулатор за рефинансиране", "RefinancingCalculator", "Home", null, new { @class = "nav-link" })                
-            </li>
-            <li class="nav-item">
-                @Html.ActionLink("Лизингов калкулатор", "LeasingCalculator", "Home", null, new { @class = "nav-link" })
-            </li>
-        </ul>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <span class="navbar-brand">@Html.ActionLink("Начало", "Index", "Home", null, null)</span>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        @Html.ActionLink("Финансов калкулатор", "FinanceCalculator", "Home", null, new { @class = "nav-link" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Калкулатор за рефинансиране", "RefinancingCalculator", "Home", null, new { @class = "nav-link" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Лизингов калкулатор", "LeasingCalculator", "Home", null, new { @class = "nav-link" })
+                    </li>
+                </ul>
+            </div>
+        </div>
     </nav>
 
+    <!-- Main Container -->
     <div class="container-fluid">
         @RenderBody()
     </div>
 
+    <!-- Footer -->
+    <footer class="py-5 bg-dark">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; Финансов Калкулатор 2018</p>
+        </div>
+    </footer>
+
     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 </body>
 </html>
