@@ -2,10 +2,22 @@
 
 namespace FinanceCalculator.Models
 {
-    public class FinanceCalculatorVM
+    public class CreditCalculatorVM
     {
-        public FinanceCalculatorParamsVM Params { get; set; }
-        public FinanceCalculatorResultVM Result { get; set; }
+        public CreditCalculatorParamsVM Params { get; set; }
+
+        public CreditCalculatorResultVM Result { get; set; }
+
+        public CreditCalculatorVM()
+        {
+            this.Params = new CreditCalculatorParamsVM();
+            this.Params.IsAnnuityInstallments = true;
+            this.Params.TreatApplicationFeeAsPercent = true;
+            this.Params.TreatProcessingFeeAsPercent = true;
+            this.Params.TreatMonthlyManagementFeeAsPercent = true;
+            this.Params.TreatAnnualManagementFeeAsPercent = true;
+        }
+
         public bool IsModelValid(ModelStateDictionary dic)
         {
             if ((Params.Amount ?? 0) <= 0 || (Params.Amount ?? 0) > 999999999) 
@@ -100,6 +112,7 @@ namespace FinanceCalculator.Models
 
             return dic.IsValid;
         }
+
         private decimal getFeeAmount(decimal fromAmount, decimal fee, bool percent)
         {
             if (!percent) return fee;

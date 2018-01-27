@@ -43,7 +43,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="APRCalculator.cs" />
-    <Compile Include="FinanceCalculator.cs" />
+    <Compile Include="Contracts\ICreditCalculator.cs" />
+    <Compile Include="Contracts\ILeasingCalculator.cs" />
+    <Compile Include="Contracts\IRefinancingCalculator.cs" />
+    <Compile Include="CreditCalculator.cs" />
     <Compile Include="LeasingCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RefinancingCalculator.cs" />

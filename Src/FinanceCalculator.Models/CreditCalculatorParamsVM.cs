@@ -1,19 +1,19 @@
 ﻿namespace FinanceCalculator.Models
 {
-    public class FinanceCalcParams
+    public class CreditCalculatorParamsVM
     {
         /// <summary>
         /// Размер на кредита
         /// </summary>
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; }
         /// <summary>
         /// Срок (месеци)
         /// </summary>
-        public int Period { get; set; }
+        public int? Period { get; set; }
         /// <summary>
         /// Лихва (%) 
         /// </summary>
-        public decimal Rate { get; set; }
+        public decimal? Rate { get; set; }
         /// <summary>
         /// Промоционален период (месеци) 
         /// </summary>

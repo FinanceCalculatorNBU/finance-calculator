@@ -1,24 +1,25 @@
 ﻿using System;
 using FinanceCalculator.Models;
 using System.Collections.Generic;
+using FinanceCalculator.Calculators.Contracts;
 
 namespace FinanceCalculator.Calculators
 {
-    public class CreditCalculator
+    public class CreditCalculator : ICreditCalculator
     {
-       /// <summary>
-       /// Смята резултатите на финансовия калкулатор
-       /// </summary>
-       /// <param name="p"></param>
-       /// <returns></returns>
-        public FinanceCalcResults Calculate(FinanceCalcParams p)
+        /// <summary>
+        /// Смята резултатите на финансовия калкулатор
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public CreditCalcResults Calculate(CreditCalcParams p)
         {
             IsParamsValid(p);
-            FinanceCalcResults res = null;
-            if (p.IsAnnuityInstallments) res=CalculateAnnuity(p);
-            else res=CalculateDescending(p);
+            CreditCalcResults res = null;
+            if (p.IsAnnuityInstallments) res = CalculateAnnuity(p);
+            else res = CalculateDescending(p);
             APRCalculator aprCalc = new APRCalculator(p.Amount);
-            foreach(var m in res.MonthlyInstallments)
+            foreach (var m in res.MonthlyInstallments)
             {
                 if (m.RowNumber == 0) aprCalc.AddInstalment(m.Fees, 0);
                 else aprCalc.AddInstalment(m.TotalInstallment, 365.25M / 12M * m.RowNumber);
@@ -30,15 +31,7 @@ namespace FinanceCalculator.Calculators
             res.TotalInstallmentsWithTotalFeesAndRates = res.TotalInstallments + res.TotalFees;
             return res;
         }
-        /// <summary>
-        /// Функция, която закръглява до 2ри знак след десетичната запетая
-        /// </summary>
-        /// <param name="val"></param>
-        /// <returns></returns>
-        public static decimal Round(decimal val)
-        {
-           return Math.Round(val, 2);
-        }
+
         /// <summary>
         /// Функция, пресмяща анюитетните вноски
         /// </summary>
@@ -50,14 +43,14 @@ namespace FinanceCalculator.Calculators
         {
             var rate = (decimal)yearlyInterestRate / 100 / 12;
             var denominator = (decimal)Math.Pow((1 + (double)rate), totalNumberOfMonths) - 1;
-            return Round((rate + (rate / denominator)) * loanAmount);
+            return Math.Round((rate + (rate / denominator)) * loanAmount, 2);
         }
         /// <summary>
         /// Пресмята и запълва първия ред от погасителния план
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
-        private MonthlyResult GetZeroMonth(FinanceCalcParams p)
+        private MonthlyResult GetZeroMonth(CreditCalcParams p)
         {
             MonthlyResult m = new MonthlyResult();
             m.RowNumber = 0;
@@ -75,10 +68,10 @@ namespace FinanceCalculator.Calculators
         /// <param name="fee"></param>
         /// <param name="percent"></param>
         /// <returns></returns>
-        private decimal getFeeAmount(decimal fromAmount,decimal? fee, bool percent)
+        private decimal getFeeAmount(decimal fromAmount, decimal? fee, bool percent)
         {
             if (!percent) return fee ?? 0;
-            return fromAmount * (fee ?? 0)/100;
+            return fromAmount * (fee ?? 0) / 100;
         }
         /// <summary>
         /// Пресмята първоначалните такси
@@ -86,13 +79,13 @@ namespace FinanceCalculator.Calculators
         /// <param name="p"></param>
         /// <param name="m"></param>
         /// <returns></returns>
-        private decimal InitialFeesCalc(FinanceCalcParams p, MonthlyResult m)
-        {          
+        private decimal InitialFeesCalc(CreditCalcParams p, MonthlyResult m)
+        {
 
             m.Fees = getFeeAmount(p.Amount, p.ApplicationFee, p.TreatApplicationFeeAsPercent);
             m.Fees += getFeeAmount(p.Amount, p.ProcessingFee, p.TreatProcessingFeeAsPercent);
             m.Fees += getFeeAmount(p.Amount, p.OtherInitialFees, p.TreatOtherInitialFeesAsPercent);
-            return Round(m.Fees);
+            return Math.Round(m.Fees, 2);
         }
         /// <summary>
         /// Функция, пресмятаща Месечните такси
@@ -100,11 +93,11 @@ namespace FinanceCalculator.Calculators
         /// <param name="p"></param>
         /// <param name="m"></param>
         /// <returns></returns>
-        private decimal MonthlyFeesCalc(FinanceCalcParams p, MonthlyResult m)
+        private decimal MonthlyFeesCalc(CreditCalcParams p, MonthlyResult m)
         {
             m.Fees = getFeeAmount(m.PrincipalRemainder, p.MonthlyManagementFee, p.TreatMonthlyManagementFeeAsPercent);
             m.Fees += getFeeAmount(m.PrincipalRemainder, p.OtherMonthlyFees, p.TreatOtherMonthlyFeesAsPercent);
-            return Round(m.Fees);
+            return Math.Round(m.Fees, 2);
         }
         /// <summary>
         /// Функция, пресмятаща годишните такси
@@ -112,25 +105,25 @@ namespace FinanceCalculator.Calculators
         /// <param name="p"></param>
         /// <param name="m"></param>
         /// <returns></returns>
-        private decimal AnnualFeesCalc(FinanceCalcParams p, MonthlyResult m)
+        private decimal AnnualFeesCalc(CreditCalcParams p, MonthlyResult m)
         {
             m.Fees = getFeeAmount(m.PrincipalRemainder, p.AnnualManagementFee, p.TreatAnnualManagementFeeAsPercent);
             m.Fees += getFeeAmount(m.PrincipalRemainder, p.OtherAnnualFees, p.TreatOtherAnnualFeesAsPercent);
-            return Round(m.Fees);
+            return Math.Round(m.Fees, 2);
         }
         /// <summary>
         /// Функция, пресмятаща резултатите от погасителния план при анюитетни вноски
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
-        private FinanceCalcResults CalculateAnnuity(FinanceCalcParams p)
+        private CreditCalcResults CalculateAnnuity(CreditCalcParams p)
         {
-            FinanceCalcResults res = new FinanceCalcResults();
+            CreditCalcResults res = new CreditCalcResults();
             res.MonthlyInstallments = new List<MonthlyResult>();
             res.MonthlyInstallments.Add(GetZeroMonth(p));
             bool hasPromotion = p.PromotionPeriod.HasValue;
-            decimal pmtPromotional = hasPromotion?PMT(p.PromotionRate.Value,p.Period-(p.GratisPeriod??0), p.Amount):0;
-            decimal pmtNormal = hasPromotion?0:PMT(p.Rate, p.Period-(p.GratisPeriod??0), p.Amount);
+            decimal pmtPromotional = hasPromotion ? PMT(p.PromotionRate.Value, p.Period - (p.GratisPeriod ?? 0), p.Amount) : 0;
+            decimal pmtNormal = hasPromotion ? 0 : PMT(p.Rate, p.Period - (p.GratisPeriod ?? 0), p.Amount);
             decimal promotionalInstallment = 0;
             for (int i = 1; i <= p.Period; i++)
             {
@@ -139,9 +132,9 @@ namespace FinanceCalculator.Calculators
                 else m.PrincipalRemainder = res.MonthlyInstallments[i - 1].CurrentPrincipallRemainder();
                 m.RowNumber = i;
                 m.Date = DateTime.Now.AddMonths(i);
-                if (i <= (p.PromotionPeriod ?? 0)) 
+                if (i <= (p.PromotionPeriod ?? 0))
                 {
-                    m.RateInstallment = Round((decimal)(m.PrincipalRemainder*p.PromotionRate/100)/12);
+                    m.RateInstallment = Math.Round((decimal)(m.PrincipalRemainder * p.PromotionRate / 100) / 12, 2);
                     if (i <= (p.GratisPeriod ?? 0))
                     {
                         m.Installment = m.RateInstallment;
@@ -150,13 +143,13 @@ namespace FinanceCalculator.Calculators
                     {
                         m.Installment = pmtPromotional;
                     }
-                    m.PrinicpalInstallment = m.Installment-m.RateInstallment;
+                    m.PrinicpalInstallment = m.Installment - m.RateInstallment;
                     promotionalInstallment += m.PrinicpalInstallment;
 
                 }
                 else
-                { 
-                    m.RateInstallment = Round((decimal)(m.PrincipalRemainder * p.Rate / 100) / 12);
+                {
+                    m.RateInstallment = Math.Round((decimal)(m.PrincipalRemainder * p.Rate / 100) / 12, 2);
                     if (i <= (p.GratisPeriod ?? 0))
                     {
                         m.Installment = m.RateInstallment;
@@ -165,73 +158,73 @@ namespace FinanceCalculator.Calculators
                     {
                         if (pmtNormal == 0)
                         {
-                            pmtNormal = PMT(p.Rate, p.Period - Math.Max(p.PromotionPeriod.Value, p.GratisPeriod??0), p.Amount - promotionalInstallment);
-                        } 
+                            pmtNormal = PMT(p.Rate, p.Period - Math.Max(p.PromotionPeriod.Value, p.GratisPeriod ?? 0), p.Amount - promotionalInstallment);
+                        }
                         if (i == p.Period)
                         {
                             pmtNormal = PMT(p.Rate, 1, m.PrincipalRemainder);
                         }
                         m.Installment = pmtNormal;
                     }
-                    m.PrinicpalInstallment = m.Installment - m.RateInstallment; 
+                    m.PrinicpalInstallment = m.Installment - m.RateInstallment;
                 }
-                if (i % 12 == 1 && i != 1) m.Fees = MonthlyFeesCalc(p, m) + AnnualFeesCalc(p, m); 
+                if (i % 12 == 1 && i != 1) m.Fees = MonthlyFeesCalc(p, m) + AnnualFeesCalc(p, m);
                 else m.Fees = MonthlyFeesCalc(p, m);
                 m.TotalInstallment = m.Installment + m.Fees;
                 res.MonthlyInstallments.Add(m);
             }
-          return res;
-        }
-
-       /// <summary>
-       /// Функция, пресмятаща резултатите от погасителния план при намаляващи месечни вноски
-       /// </summary>
-       /// <param name="p"></param>
-       /// <returns></returns>
-        private FinanceCalcResults CalculateDescending(FinanceCalcParams p)
-        {
-            FinanceCalcResults res = new FinanceCalcResults();
-            res.MonthlyInstallments = new List<MonthlyResult>();
-            res.MonthlyInstallments.Add(GetZeroMonth(p));
-           decimal principalInstallment=Round(p.Amount/(p.Period-(p.GratisPeriod??0)));
-           for (int i = 1; i <= p.Period; i++)
-           {
-               MonthlyResult m = new MonthlyResult();
-               if (i == 1) m.PrincipalRemainder = p.Amount;
-               else m.PrincipalRemainder = res.MonthlyInstallments[i - 1].CurrentPrincipallRemainder();
-               m.RowNumber = i;
-               m.Date = DateTime.Now.AddMonths(i);
-               bool isInPromotion=(i <= (p.PromotionPeriod ?? 0));
-               bool isInGratis = (i <= (p.GratisPeriod ?? 0));
-               m.RateInstallment = Round((decimal)(m.PrincipalRemainder * (isInPromotion?p.PromotionRate:p.Rate) / 100) / 12);
-               if(isInGratis)
-               {
-                   m.PrinicpalInstallment = 0;
-               }
-               else
-               {
-                   m.PrinicpalInstallment = (i == p.Period) ? Round(p.Amount - (i - 1 - (p.GratisPeriod ?? 0)) * principalInstallment) : principalInstallment;
-               }
-               m.Installment = (isInGratis ? 0 : m.PrinicpalInstallment) + m.RateInstallment;
-               if (i % 12 == 1 && i != 1) m.Fees = MonthlyFeesCalc(p, m) + AnnualFeesCalc(p, m);
-               else m.Fees = MonthlyFeesCalc(p, m);
-               m.TotalInstallment = m.Installment + m.Fees;
-               res.MonthlyInstallments.Add(m);
-           }
             return res;
         }
 
-        public void IsParamsValid(FinanceCalcParams Params)
-        { 
-            if ((Params.Amount ) <= 0 || (Params.Amount) > 999999999)
+        /// <summary>
+        /// Функция, пресмятаща резултатите от погасителния план при намаляващи месечни вноски
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private CreditCalcResults CalculateDescending(CreditCalcParams p)
+        {
+            CreditCalcResults res = new CreditCalcResults();
+            res.MonthlyInstallments = new List<MonthlyResult>();
+            res.MonthlyInstallments.Add(GetZeroMonth(p));
+            decimal principalInstallment = Math.Round(p.Amount / (p.Period - (p.GratisPeriod ?? 0)), 2);
+            for (int i = 1; i <= p.Period; i++)
+            {
+                MonthlyResult m = new MonthlyResult();
+                if (i == 1) m.PrincipalRemainder = p.Amount;
+                else m.PrincipalRemainder = res.MonthlyInstallments[i - 1].CurrentPrincipallRemainder();
+                m.RowNumber = i;
+                m.Date = DateTime.Now.AddMonths(i);
+                bool isInPromotion = (i <= (p.PromotionPeriod ?? 0));
+                bool isInGratis = (i <= (p.GratisPeriod ?? 0));
+                m.RateInstallment = Math.Round((decimal)(m.PrincipalRemainder * (isInPromotion ? p.PromotionRate : p.Rate) / 100) / 12, 2);
+                if (isInGratis)
+                {
+                    m.PrinicpalInstallment = 0;
+                }
+                else
+                {
+                    m.PrinicpalInstallment = (i == p.Period) ? Math.Round(p.Amount - (i - 1 - (p.GratisPeriod ?? 0)) * principalInstallment, 2) : principalInstallment;
+                }
+                m.Installment = (isInGratis ? 0 : m.PrinicpalInstallment) + m.RateInstallment;
+                if (i % 12 == 1 && i != 1) m.Fees = MonthlyFeesCalc(p, m) + AnnualFeesCalc(p, m);
+                else m.Fees = MonthlyFeesCalc(p, m);
+                m.TotalInstallment = m.Installment + m.Fees;
+                res.MonthlyInstallments.Add(m);
+            }
+            return res;
+        }
+
+        public void IsParamsValid(CreditCalcParams Params)
+        {
+            if ((Params.Amount) <= 0 || (Params.Amount) > 999999999)
             {
                 throw new ArgumentException("Моля въведете размер на кредита по-голям от нула и по-малко от 1 000 000 000.");
             }
-            if ((Params.Period ) <= 0 || (Params.Period ) > 960)
+            if ((Params.Period) <= 0 || (Params.Period) > 960)
             {
                 throw new ArgumentException("Моля въведете коректно число за срок (до 960 месеца).");
             }
-            if ((Params.Rate ) <= 0)
+            if ((Params.Rate) <= 0)
             {
                 throw new ArgumentException("Моля въведете размер на лихвата по-голяма от нула.");
             }

@@ -6,6 +6,13 @@ namespace FinanceCalculator.Models
     {
         public LeasingCalcParamsVM Params { get; set; }
         public LeasingCalcResultsVM Result { get; set; }
+
+        public LeasingCalculatorVM()
+        {
+            this.Params = new LeasingCalcParamsVM();
+            this.Params.TreatInitialManagementFeeAsPercent = true;    
+        }
+
         public bool IsModelValid(ModelStateDictionary dic)
         {
             if (!Params.Price.HasValue && ((Params.Price) <= 100 || (Params.Price) >= 100000000))

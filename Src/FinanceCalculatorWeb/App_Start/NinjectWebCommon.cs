@@ -1,7 +1,7 @@
-[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(FinanceCalculator.Web.App_Start.NinjectWebCommon), "Start")]
-[assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(FinanceCalculator.Web.App_Start.NinjectWebCommon), "Stop")]
+[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(FinanceCalculatorWeb.App_Start.NinjectWebCommon), "Start")]
+[assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(FinanceCalculatorWeb.App_Start.NinjectWebCommon), "Stop")]
 
-namespace FinanceCalculator.Web.App_Start
+namespace FinanceCalculatorWeb.App_Start
 {
     using System;
     using System.Web;
@@ -10,6 +10,10 @@ namespace FinanceCalculator.Web.App_Start
 
     using Ninject;
     using Ninject.Web.Common;
+    using FinanceCalculator.Services.Contracts;
+    using FinanceCalculator.Services;
+    using FinanceCalculator.Calculators.Contracts;
+    using FinanceCalculator.Calculators;
 
     public static class NinjectWebCommon 
     {
@@ -61,6 +65,11 @@ namespace FinanceCalculator.Web.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
+            kernel.Bind<ICalculatorService>().To<CalculatorService>();
+
+            kernel.Bind<ICreditCalculator>().To<CreditCalculator>();
+            kernel.Bind<ILeasingCalculator>().To<LeasingCalculator>();
+            kernel.Bind<IRefinancingCalculator>().To<RefinancingCalculator>();
         }        
     }
 }

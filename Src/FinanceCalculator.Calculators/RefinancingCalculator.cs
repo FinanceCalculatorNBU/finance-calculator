@@ -1,9 +1,10 @@
 ﻿using System;
 using FinanceCalculator.Models;
+using FinanceCalculator.Calculators.Contracts;
 
 namespace FinanceCalculator.Calculators
 {
-    public class RefinancingCalculator
+    public class RefinancingCalculator : IRefinancingCalculator
     {
         public RefinancingCalcResults Calculate(RefinancingCalcParams p)
         {
@@ -16,41 +17,40 @@ namespace FinanceCalculator.Calculators
 
             decimal principalInstallments = p.CurrentCreditAmount.Value - GetPrincipalInstalments(p.CurrentCreditAmount.Value, p.CurrentCreditPeriod.Value, p.CurrentCreditMadeInstallments.Value, p.CurrentCreditRate.Value);
             res.CurrPreTermFee = (p.CurrentCreditAmount.Value - principalInstallments) * p.CurrentCreditPreTermFee.Value / 100;
-            res.CurrMonthlyInstallment = PMT(p.CurrentCreditRate.Value, p.CurrentCreditPeriod.Value, p.CurrentCreditAmount.Value);           
-            int newCreditPeriod =(p.CurrentCreditPeriod.Value - p.CurrentCreditMadeInstallments.Value);
-            res.CurrTotalPaid = Round(PMT(p.CurrentCreditRate.Value, p.CurrentCreditPeriod.Value, p.CurrentCreditAmount.Value) * newCreditPeriod);
-            res.NewMonthlyInstallment = PMT(p.NewCreditRate.Value, newCreditPeriod, p.CurrentCreditAmount.Value-principalInstallments);
+            res.CurrMonthlyInstallment = PMT(p.CurrentCreditRate.Value, p.CurrentCreditPeriod.Value, p.CurrentCreditAmount.Value);
+            int newCreditPeriod = (p.CurrentCreditPeriod.Value - p.CurrentCreditMadeInstallments.Value);
+            res.CurrTotalPaid = Math.Round(PMT(p.CurrentCreditRate.Value, p.CurrentCreditPeriod.Value, p.CurrentCreditAmount.Value) * newCreditPeriod, 2);
+            res.NewMonthlyInstallment = PMT(p.NewCreditRate.Value, newCreditPeriod, p.CurrentCreditAmount.Value - principalInstallments);
 
             decimal newCreditFees = getFeeAmount(p.CurrentCreditAmount.Value, p.NewCreditInitialFeesPercent, true) + p.NewCreditInitialFeesCurrency.Value;
             decimal newCreditToBePaid = res.NewMonthlyInstallment * newCreditPeriod;
             res.NewTotalPaid = newCreditToBePaid + newCreditFees + res.CurrPreTermFee;
 
-            res.CurrPreTermFee = Round(res.CurrPreTermFee);
-            res.NewTotalPaid = Round(res.NewTotalPaid);
-            res.NewMonthlyInstallment = Round(res.NewMonthlyInstallment);
-            res.CurrMonthlyInstallment = Round(res.CurrMonthlyInstallment);
+            res.CurrPreTermFee = Math.Round(res.CurrPreTermFee, 2);
+            res.NewTotalPaid = Math.Round(res.NewTotalPaid, 2);
+            res.NewMonthlyInstallment = Math.Round(res.NewMonthlyInstallment, 2);
+            res.CurrMonthlyInstallment = Math.Round(res.CurrMonthlyInstallment, 2);
             return res;
         }
-        public static decimal Round(decimal val)
-        {
-            return Math.Round(val, 2);
-        }
+
         public decimal PMT(decimal yearlyInterestRate, int totalNumberOfMonths, decimal loanAmount)
         {
             var rate = (decimal)yearlyInterestRate / 100 / 12;
             var denominator = (decimal)Math.Pow((1 + (double)rate), totalNumberOfMonths) - 1;
             return (rate + (rate / denominator)) * loanAmount;
         }
+
         private decimal getFeeAmount(decimal fromAmount, decimal? fee, bool percent)
         {
             if (!percent) return fee ?? 0;
             return fromAmount * (fee ?? 0) / 100;
         }
+
         private decimal GetPrincipalInstalments(decimal amount, int period, int numberOfMonths, decimal rate)
         {
             decimal installment = PMT(rate, period, amount);
             decimal principalInstallmentSum = 0;
-            decimal principalRemainder=amount;
+            decimal principalRemainder = amount;
             for (int i = 1; i <= numberOfMonths; i++)
             {
                 decimal rateInstallment = (decimal)(principalRemainder * rate / 100) / 12;
@@ -60,6 +60,7 @@ namespace FinanceCalculator.Calculators
             }
             return principalRemainder;
         }
+
         public void IsParamsValid(RefinancingCalcParams Params)
         {
             if ((Params.CurrentCreditAmount) <= 0 || (Params.CurrentCreditAmount) > 99999999)

@@ -2,7 +2,7 @@
 
 namespace FinanceCalculator.Models
 {
-    public class FinanceCalcResults
+    public class CreditCalculatorResultVM
     {
         /// <summary>
         /// ГОДИШЕН ПРОЦЕНТЕН РАЗХОД
@@ -27,6 +27,6 @@ namespace FinanceCalculator.Models
         /// <summary>
         /// Колекция с редове от погасителния план
         /// </summary>
-        public List<MonthlyResult> MonthlyInstallments { get; set; }
+        public List<MonthlyResultVM> MonthlyInstallments { get; set; }
     }
 }

@@ -70,11 +70,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FinanceCalcParams.cs" />
-    <Compile Include="FinanceCalcResults.cs" />
-    <Compile Include="FinanceCalculatorParamsVM.cs" />
-    <Compile Include="FinanceCalculatorResultVM.cs" />
-    <Compile Include="FinanceCalculatorVM.cs" />
+    <Compile Include="CreditCalcParams.cs" />
+    <Compile Include="CreditCalcResults.cs" />
+    <Compile Include="CreditCalculatorParamsVM.cs" />
+    <Compile Include="CreditCalculatorResultVM.cs" />
+    <Compile Include="CreditCalculatorVM.cs" />
     <Compile Include="Instalment.cs" />
     <Compile Include="LeasingCalcParams.cs" />
     <Compile Include="LeasingCalcParamsVM.cs" />

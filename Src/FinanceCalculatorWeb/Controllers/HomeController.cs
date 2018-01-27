@@ -5,40 +5,42 @@ using System.Web;
 using System.Web.Mvc;
 using FinanceCalculator.Models;
 using FinanceCalculator.Calculators;
+using FinanceCalculator.Services.Contracts;
 
 namespace FinanceCalculator.Web.Controllers
 {
     public class HomeController : Controller
     {
-        //
-        // GET: /Home/
+        private readonly ICalculatorService calculatorService;
+
+        public HomeController(ICalculatorService calculatorService)
+        {
+            this.calculatorService = calculatorService;
+        }
 
         public ActionResult Index()
         {
             return View();
         }
+
         [HttpGet]
         public ActionResult FinanceCalculator()
         {
-            FinanceCalculatorVM model = new FinanceCalculatorVM();
-            model.Params = new FinanceCalculatorParamsVM();
-            model.Params.IsAnnuityInstallments = true;
-            model.Params.TreatApplicationFeeAsPercent = true;
-            model.Params.TreatProcessingFeeAsPercent = true;
-            model.Params.TreatMonthlyManagementFeeAsPercent = true;
-            model.Params.TreatAnnualManagementFeeAsPercent = true;
+            CreditCalculatorVM model = new CreditCalculatorVM();
+
             return View(model);
         }
+
         [HttpPost]
-        public ActionResult FinanceCalculator(FinanceCalculatorVM model)
+        public ActionResult FinanceCalculator(CreditCalculatorVM model)
         {
             if (model.IsModelValid(ModelState))
             {
                 var paramats = GetParamsFromModel(model);
-                CreditCalculator calc = new CreditCalculator();
-                FinanceCalcResults res = calc.Calculate(paramats);
+                CreditCalcResults res = this.calculatorService.CalculateCredit(paramats);
                 model.Result = GetResultsForModel(res);
             }
+
             return View(model);            
         }
 
@@ -46,17 +48,19 @@ namespace FinanceCalculator.Web.Controllers
         public ActionResult RefinancingCalculator()
         {
             RefinancingCalculatorVM model = new RefinancingCalculatorVM();
-            model.Params = new RefinancingCalcParamsVM();
+
             return View(model);
         }
+
         [HttpPost]
         public ActionResult RefinancingCalculator(RefinancingCalculatorVM model)
         {
             if (model.IsModelValid(ModelState))
             {
                 var paramats = GetParamsFromModel(model);
-                RefinancingCalculator calc = new RefinancingCalculator();
-                RefinancingCalcResults res = calc.Calculate(paramats);
+
+                RefinancingCalcResults res = this.calculatorService.CalculateRefinancing(paramats);
+
                 model.Result = GetResultsForModel(res);
             }
             return View(model);
@@ -65,19 +69,20 @@ namespace FinanceCalculator.Web.Controllers
         [HttpGet]
         public ActionResult LeasingCalculator()
         {
-            LeasingCalculatorVM model = new LeasingCalculatorVM();
-            model.Params = new LeasingCalcParamsVM();
-            model.Params.TreatInitialManagementFeeAsPercent = true;           
+            LeasingCalculatorVM model = new LeasingCalculatorVM();       
+
             return View(model);
         }
+
         [HttpPost]
         public ActionResult LeasingCalculator(LeasingCalculatorVM model)
         {
             if (model.IsModelValid(ModelState))
             {
                 var paramats = GetParamsFromModel(model);
-                LeasingCalculator calc = new LeasingCalculator();
-                LeasingCalcResults res = calc.Calculate(paramats);
+
+                LeasingCalcResults res = this.calculatorService.CalculateLeasing(paramats);
+
                 model.Result = GetResultsForModel(res);
             }
             return View(model);
@@ -86,27 +91,32 @@ namespace FinanceCalculator.Web.Controllers
         private LeasingCalcParams GetParamsFromModel(LeasingCalculatorVM model)
         {
             LeasingCalcParams res = new LeasingCalcParams();
+
             res.Price = model.Params.Price ?? 0;
             res.InitialInstallment = model.Params.InitialInstallment ?? 0;
             res.Period = model.Params.Period ?? 0;
             res.MonthlyInstallment = model.Params.MonthlyInstallment ?? 0;
             res.InitialManagementFee = model.Params.InitialManagementFee;
             res.TreatInitialManagementFeeAsPercent = model.Params.TreatInitialManagementFeeAsPercent;
+
             return res;
         }
 
         private LeasingCalcResultsVM GetResultsForModel(LeasingCalcResults res)
         {
             LeasingCalcResultsVM mRes = new LeasingCalcResultsVM();
+
             mRes.AnnualPercentRate = res.AnnualPercentRate;
             mRes.TotalFees = res.TotalFees;
             mRes.TotalPaidWithFees = res.TotalPaidWithFees;
+
             return mRes;
         }
 
         private RefinancingCalcParams GetParamsFromModel(RefinancingCalculatorVM model)
         {
             RefinancingCalcParams res = new RefinancingCalcParams();
+
             res.CurrentCreditAmount = model.Params.CurrentCreditAmount ?? 0;
             res.CurrentCreditMadeInstallments = model.Params.CurrentCreditMadeInstallments ?? 0;
             res.CurrentCreditPeriod = model.Params.CurrentCreditPeriod ?? 0;
@@ -115,12 +125,14 @@ namespace FinanceCalculator.Web.Controllers
             res.NewCreditInitialFeesCurrency = model.Params.NewCreditInitialFeesCurrency;
             res.NewCreditInitialFeesPercent = model.Params.NewCreditInitialFeesPercent;
             res.NewCreditRate = model.Params.NewCreditRate;
+
             return res;
         }
 
         private RefinancingCalcResultsVM GetResultsForModel(RefinancingCalcResults res)
         {
             RefinancingCalcResultsVM mRes = new RefinancingCalcResultsVM();
+
             mRes.CurrMonthlyInstallment = res.CurrMonthlyInstallment;
             mRes.CurrPeriod = res.CurrPeriod;
             mRes.CurrPreTermFee = res.CurrPreTermFee;
@@ -129,13 +141,15 @@ namespace FinanceCalculator.Web.Controllers
             mRes.NewMonthlyInstallment = res.NewMonthlyInstallment;
             mRes.NewPeriod = res.NewPeriod;
             mRes.NewRate = res.NewRate;
-            mRes.NewTotalPaid = res.NewTotalPaid;     
+            mRes.NewTotalPaid = res.NewTotalPaid;   
+  
             return mRes;
         }
             
-        private FinanceCalcParams GetParamsFromModel(FinanceCalculatorVM model)
+        private CreditCalcParams GetParamsFromModel(CreditCalculatorVM model)
         {
-            FinanceCalcParams res = new FinanceCalcParams();
+            CreditCalcParams res = new CreditCalcParams();
+
             res.Amount = model.Params.Amount??0;
             res.Period = model.Params.Period??0;
             res.Rate = model.Params.Rate ?? 0;
@@ -157,11 +171,12 @@ namespace FinanceCalculator.Web.Controllers
             res.TreatAnnualManagementFeeAsPercent=model.Params.TreatAnnualManagementFeeAsPercent;
             res.OtherAnnualFees = model.Params.OtherAnnualFees;
             res.TreatOtherAnnualFeesAsPercent = model.Params.TreatOtherAnnualFeesAsPercent;
+
             return res;
         }
-        private FinanceCalculatorResultVM GetResultsForModel(FinanceCalcResults res)
+        private CreditCalculatorResultVM GetResultsForModel(CreditCalcResults res)
         {
-            FinanceCalculatorResultVM mRes = new FinanceCalculatorResultVM();
+            CreditCalculatorResultVM mRes = new CreditCalculatorResultVM();
             mRes.AnnualPercentageRate = res.AnnualPercentageRate;
             
             mRes.TotalFees = res.TotalFees;
@@ -169,6 +184,7 @@ namespace FinanceCalculator.Web.Controllers
             mRes.TotalInstallmentsWithTotalFeesAndRates = res.TotalInstallmentsWithTotalFeesAndRates;
             mRes.TotalRates = res.TotalRates;
             mRes.MonthlyInstallments = new List<MonthlyResultVM>();
+
             foreach(var m in res.MonthlyInstallments)
             {
                 MonthlyResultVM mcalc = new MonthlyResultVM();
@@ -182,9 +198,8 @@ namespace FinanceCalculator.Web.Controllers
                 mcalc.TotalInstallment = m.TotalInstallment;
                 mRes.MonthlyInstallments.Add(mcalc);
             }
+
             return mRes;
         }
-
-
     }
 }

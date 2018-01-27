@@ -42,7 +42,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalculatorService.cs" />
+    <Compile Include="Contracts\ICalculatorService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FinanceCalculator.Calculators\FinanceCalculator.Calculators.csproj">
+      <Project>{3b202614-5959-4f6e-8ad6-d6c2b4388244}</Project>
+      <Name>FinanceCalculator.Calculators</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FinanceCalculator.Common\FinanceCalculator.Common.csproj">
+      <Project>{aa27a702-56f4-470a-9168-b42be6de83bb}</Project>
+      <Name>FinanceCalculator.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FinanceCalculator.Models\FinanceCalculator.Models.csproj">
+      <Project>{fb475fde-1688-4d06-baee-6f96deff23bb}</Project>
+      <Name>FinanceCalculator.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

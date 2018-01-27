@@ -5,7 +5,13 @@ namespace FinanceCalculator.Models
     public class RefinancingCalculatorVM
     {
         public RefinancingCalcParamsVM Params { get; set; }
+
         public RefinancingCalcResultsVM Result { get; set; }
+
+        public RefinancingCalculatorVM()
+        {
+            this.Params = new RefinancingCalcParamsVM();
+        }
 
         public bool IsModelValid(ModelStateDictionary dic)
         {
