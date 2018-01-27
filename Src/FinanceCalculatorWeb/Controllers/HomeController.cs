@@ -1,12 +1,12 @@
-﻿using Finance;
-using FinanceCalculatorWeb.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using FinanceCalculator.Models;
+using FinanceCalculator.Calculators;
 
-namespace FinanceCalculatorWeb.Controllers
+namespace FinanceCalculator.Web.Controllers
 {
     public class HomeController : Controller
     {
@@ -35,7 +35,7 @@ namespace FinanceCalculatorWeb.Controllers
             if (model.IsModelValid(ModelState))
             {
                 var paramats = GetParamsFromModel(model);
-                FinanceCalculator calc = new FinanceCalculator();
+                CreditCalculator calc = new CreditCalculator();
                 FinanceCalcResults res = calc.Calculate(paramats);
                 model.Result = GetResultsForModel(res);
             }

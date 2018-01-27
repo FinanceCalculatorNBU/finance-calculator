@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace FinanceCalculatorWeb
+namespace FinanceCalculator.Web
 {
     public class FilterConfig
     {

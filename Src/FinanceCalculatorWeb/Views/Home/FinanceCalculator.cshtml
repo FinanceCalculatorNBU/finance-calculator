@@ -1,4 +1,4 @@
-﻿@model FinanceCalculatorWeb.Models.FinanceCalculatorVM
+﻿@model FinanceCalculator.Models.FinanceCalculatorVM
 @{
     ViewBag.Title = "FinanceCalculator";
 }
@@ -231,7 +231,7 @@
             </thead>
             <tbody>
 
-                @foreach (FinanceCalculatorWeb.Models.MonthlyResultVM m in Model.Result.MonthlyInstallments)
+                @foreach (FinanceCalculator.Models.MonthlyResultVM m in Model.Result.MonthlyInstallments)
                 {
                     <tr>
                         <td>@m.RowNumber</td>
