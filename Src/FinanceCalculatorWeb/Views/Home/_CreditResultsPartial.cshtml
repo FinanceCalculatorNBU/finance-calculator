@@ -1,0 +1,41 @@
+﻿@model FinanceCalculator.Web.ViewModels.CreditCalculatorResultVM
+
+<ul class="list-group">
+    <li class="list-group-item">ГОДИШЕН ПРОЦЕНТЕН РАЗХОД: @Model.AnnualPercentageRate %</li>
+    <li class="list-group-item">ПОГАСЕНИ С ЛИХВИ И ТАКСИ: @Model.TotalInstallmentsWithTotalFeesAndRates</li>
+    <li class="list-group-item">ТАКСИ И КОМИСИОННИ: @Model.TotalFees</li>
+    <li class="list-group-item">ЛИХВИ:  @Model.TotalRates</li>
+    <li class="list-group-item">ВНОСКИ:  @Model.TotalInstallments</li>
+</ul>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Дата</th>
+                <th>Месечна вноска</th>
+                <th>Вноска главница</th>
+                <th>Вноска лихва</th>
+                <th>Остатък главница</th>
+                <th>Такси и комисионни</th>
+                <th>Паричен поток</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var m in Model.MonthlyInstallments)
+            {
+                <tr>
+                    <td>@m.RowNumber</td>
+                    <td>@m.Date.ToString("dd.MM.yyyy")</td>
+                    <td>@m.Installment</td>
+                    <td>@m.PrinicpalInstallment</td>
+                    <td>@m.RateInstallment</td>
+                    <td>@m.PrincipalRemainder</td>
+                    <td>@m.Fees</td>
+                    <td>@m.TotalInstallment</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

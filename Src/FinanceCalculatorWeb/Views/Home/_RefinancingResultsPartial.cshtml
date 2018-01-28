@@ -1,0 +1,64 @@
+﻿@model FinanceCalculator.Web.ViewModels.RefinancingCalcResultsVM
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Резултат</th>
+                <th>Текущ кредит</th>
+                <th>Нов кредит</th>
+                <th>+/- Спестявания</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Лихва</td>
+                <td>@Model.CurrRate %</td>
+                <td>@Model.NewRate %</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Срокове на кредитите</td>
+                <td>@Model.CurrPeriod</td>
+                <td>@Model.NewPeriod</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Такса за предсрочно погасяване</td>
+                <td>@Model.CurrPreTermFee</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Месечна вноска</td>
+                <td>@Model.CurrMonthlyInstallment</td>
+                <td>@Model.NewMonthlyInstallment</td>
+                <td>@(Model.CurrMonthlyInstallment - Model.NewMonthlyInstallment)</td>
+            </tr>
+            <tr>
+                <td>Общо изплатени</td>
+                <td>@Model.CurrTotalPaid</td>
+                <td>@Model.NewTotalPaid</td>
+                <td>@(Model.CurrTotalPaid - Model.NewTotalPaid)</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+@if (Model.CurrTotalPaid - Model.NewTotalPaid < 0)
+{
+    <div class="text-center">
+        <div class="col-sm-12 alert alert-danger">
+            Въведените от Вас параметри и последвалото изчисление показват, че избраната от Вас оферта за нов кредит, с която искате да рефинансирате Вашето задължение не е изгодна, тъй като цената на рефинансирането е по-висока от очакваната икономия. Моля, изберете друга оферта и изчислете отново.
+        </div>
+    </div>
+}
+else
+{
+    <div class="text-center">
+        <div class="col-sm-12 alert alert-success">
+            Според въведeните от Вас параметри и последвалото изчисление – има смисъл да рефинансирате вашето задължение, тъй като икономията от рефинансирането е по-висока от цената на настоящото Ви задължение.
+        </div>
+    </div>
+}
