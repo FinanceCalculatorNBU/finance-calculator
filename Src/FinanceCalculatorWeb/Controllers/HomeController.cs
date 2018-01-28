@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using FinanceCalculator.Models;
 using FinanceCalculator.Calculators;
 using FinanceCalculator.Services.Contracts;
+using FinanceCalculator.Web.ViewModels;
 
 namespace FinanceCalculator.Web.Controllers
 {
@@ -26,78 +27,82 @@ namespace FinanceCalculator.Web.Controllers
         [HttpGet]
         public ActionResult FinanceCalculator()
         {
-            CreditCalculatorVM model = new CreditCalculatorVM();
+            CreditCalculatorParamsVM model = new CreditCalculatorParamsVM();
 
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult FinanceCalculator(CreditCalculatorVM model)
+        public ActionResult FinanceCalculator(CreditCalculatorParamsVM model)
         {
-            if (model.IsModelValid(ModelState))
+            if (!model.IsModelValid(ModelState))
             {
-                var paramats = GetParamsFromModel(model);
-                CreditCalcResults res = this.calculatorService.CalculateCredit(paramats);
-                model.Result = GetResultsForModel(res);
+                return PartialView("_InvalidCreditParamsPartial", model);
             }
 
-            return View(model);            
+            var parameters = GetParamsFromModel(model);
+            CreditCalcResults creditResult = this.calculatorService.CalculateCredit(parameters);
+            CreditCalculatorResultVM creditViewModelResult = GetResultsForModel(creditResult);
+
+            return PartialView("_CreditResultsPartial", creditViewModelResult);
         }
 
         [HttpGet]
         public ActionResult RefinancingCalculator()
         {
-            RefinancingCalculatorVM model = new RefinancingCalculatorVM();
+            RefinancingCalcParamsVM model = new RefinancingCalcParamsVM();
 
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult RefinancingCalculator(RefinancingCalculatorVM model)
+        public ActionResult RefinancingCalculator(RefinancingCalcParamsVM model)
         {
-            if (model.IsModelValid(ModelState))
+            if (!model.IsModelValid(ModelState))
             {
-                var paramats = GetParamsFromModel(model);
-
-                RefinancingCalcResults res = this.calculatorService.CalculateRefinancing(paramats);
-
-                model.Result = GetResultsForModel(res);
+                return PartialView("_InvalidRefinancingParamsPartial", model);
             }
-            return View(model);
+
+            var parameters = GetParamsFromModel(model);
+            RefinancingCalcResults refinancingResult = this.calculatorService.CalculateRefinancing(parameters);
+            RefinancingCalcResultsVM refinancingViewModelResult = GetResultsForModel(refinancingResult);
+
+            return PartialView("_RefinancingResultsPartial", refinancingViewModelResult);
         }
 
         [HttpGet]
         public ActionResult LeasingCalculator()
         {
-            LeasingCalculatorVM model = new LeasingCalculatorVM();       
+            LeasingCalcParamsVM model = new LeasingCalcParamsVM();
 
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult LeasingCalculator(LeasingCalculatorVM model)
+        public ActionResult LeasingCalculator(LeasingCalcParamsVM model)
         {
-            if (model.IsModelValid(ModelState))
+            if (!model.IsModelValid(ModelState))
             {
-                var paramats = GetParamsFromModel(model);
-
-                LeasingCalcResults res = this.calculatorService.CalculateLeasing(paramats);
-
-                model.Result = GetResultsForModel(res);
+                return PartialView("_InvalidLeasingParamsPartial", model);
             }
-            return View(model);
+
+            var parameters = GetParamsFromModel(model);
+            LeasingCalcResults leasingResult = this.calculatorService.CalculateLeasing(parameters);
+            LeasingCalcResultsVM leasingViewModelResult = GetResultsForModel(leasingResult);
+
+            return PartialView("_LeasingResultsPartial", leasingViewModelResult);
         }
 
-        private LeasingCalcParams GetParamsFromModel(LeasingCalculatorVM model)
+        private LeasingCalcParams GetParamsFromModel(LeasingCalcParamsVM model)
         {
             LeasingCalcParams res = new LeasingCalcParams();
 
-            res.Price = model.Params.Price ?? 0;
-            res.InitialInstallment = model.Params.InitialInstallment ?? 0;
-            res.Period = model.Params.Period ?? 0;
-            res.MonthlyInstallment = model.Params.MonthlyInstallment ?? 0;
-            res.InitialManagementFee = model.Params.InitialManagementFee;
-            res.TreatInitialManagementFeeAsPercent = model.Params.TreatInitialManagementFeeAsPercent;
+            res.Price = model.Price ?? 0;
+            res.InitialInstallment = model.InitialInstallment ?? 0;
+            res.Period = model.Period ?? 0;
+            res.MonthlyInstallment = model.MonthlyInstallment ?? 0;
+            res.InitialManagementFee = model.InitialManagementFee;
+            res.TreatInitialManagementFeeAsPercent = model.TreatInitialManagementFeeAsPercent;
 
             return res;
         }
@@ -113,18 +118,18 @@ namespace FinanceCalculator.Web.Controllers
             return mRes;
         }
 
-        private RefinancingCalcParams GetParamsFromModel(RefinancingCalculatorVM model)
+        private RefinancingCalcParams GetParamsFromModel(RefinancingCalcParamsVM model)
         {
             RefinancingCalcParams res = new RefinancingCalcParams();
 
-            res.CurrentCreditAmount = model.Params.CurrentCreditAmount ?? 0;
-            res.CurrentCreditMadeInstallments = model.Params.CurrentCreditMadeInstallments ?? 0;
-            res.CurrentCreditPeriod = model.Params.CurrentCreditPeriod ?? 0;
-            res.CurrentCreditPreTermFee = model.Params.CurrentCreditPreTermFee;
-            res.CurrentCreditRate = model.Params.CurrentCreditRate;
-            res.NewCreditInitialFeesCurrency = model.Params.NewCreditInitialFeesCurrency;
-            res.NewCreditInitialFeesPercent = model.Params.NewCreditInitialFeesPercent;
-            res.NewCreditRate = model.Params.NewCreditRate;
+            res.CurrentCreditAmount = model.CurrentCreditAmount ?? 0;
+            res.CurrentCreditMadeInstallments = model.CurrentCreditMadeInstallments ?? 0;
+            res.CurrentCreditPeriod = model.CurrentCreditPeriod ?? 0;
+            res.CurrentCreditPreTermFee = model.CurrentCreditPreTermFee;
+            res.CurrentCreditRate = model.CurrentCreditRate;
+            res.NewCreditInitialFeesCurrency = model.NewCreditInitialFeesCurrency;
+            res.NewCreditInitialFeesPercent = model.NewCreditInitialFeesPercent;
+            res.NewCreditRate = model.NewCreditRate;
 
             return res;
         }
@@ -141,51 +146,52 @@ namespace FinanceCalculator.Web.Controllers
             mRes.NewMonthlyInstallment = res.NewMonthlyInstallment;
             mRes.NewPeriod = res.NewPeriod;
             mRes.NewRate = res.NewRate;
-            mRes.NewTotalPaid = res.NewTotalPaid;   
-  
+            mRes.NewTotalPaid = res.NewTotalPaid;
+
             return mRes;
         }
-            
-        private CreditCalcParams GetParamsFromModel(CreditCalculatorVM model)
+
+        private CreditCalcParams GetParamsFromModel(CreditCalculatorParamsVM model)
         {
             CreditCalcParams res = new CreditCalcParams();
 
-            res.Amount = model.Params.Amount??0;
-            res.Period = model.Params.Period??0;
-            res.Rate = model.Params.Rate ?? 0;
-            res.PromotionPeriod = model.Params.PromotionPeriod;
-            res.PromotionRate = model.Params.PromotionRate;
-            res.GratisPeriod = model.Params.GratisPeriod;
-            res.IsAnnuityInstallments = model.Params.IsAnnuityInstallments;
-            res.ApplicationFee = model.Params.ApplicationFee;
-            res.TreatApplicationFeeAsPercent = model.Params.TreatApplicationFeeAsPercent;
-            res.ProcessingFee = model.Params.ProcessingFee;
-            res.TreatProcessingFeeAsPercent = model.Params.TreatProcessingFeeAsPercent;
-            res.OtherInitialFees = model.Params.OtherInitialFees;
-            res.TreatOtherInitialFeesAsPercent = model.Params.TreatOtherInitialFeesAsPercent;
-            res.MonthlyManagementFee = model.Params.MonthlyManagementFee;
-            res.TreatMonthlyManagementFeeAsPercent = model.Params.TreatMonthlyManagementFeeAsPercent;
-            res.OtherMonthlyFees = model.Params.OtherMonthlyFees;
-            res.TreatOtherMonthlyFeesAsPercent = model.Params.TreatOtherMonthlyFeesAsPercent;
-            res.AnnualManagementFee = model.Params.AnnualManagementFee;
-            res.TreatAnnualManagementFeeAsPercent=model.Params.TreatAnnualManagementFeeAsPercent;
-            res.OtherAnnualFees = model.Params.OtherAnnualFees;
-            res.TreatOtherAnnualFeesAsPercent = model.Params.TreatOtherAnnualFeesAsPercent;
+            res.Amount = model.Amount ?? 0;
+            res.Period = model.Period ?? 0;
+            res.Rate = model.Rate ?? 0;
+            res.PromotionPeriod = model.PromotionPeriod;
+            res.PromotionRate = model.PromotionRate;
+            res.GratisPeriod = model.GratisPeriod;
+            res.IsAnnuityInstallments = model.IsAnnuityInstallments;
+            res.ApplicationFee = model.ApplicationFee;
+            res.TreatApplicationFeeAsPercent = model.TreatApplicationFeeAsPercent;
+            res.ProcessingFee = model.ProcessingFee;
+            res.TreatProcessingFeeAsPercent = model.TreatProcessingFeeAsPercent;
+            res.OtherInitialFees = model.OtherInitialFees;
+            res.TreatOtherInitialFeesAsPercent = model.TreatOtherInitialFeesAsPercent;
+            res.MonthlyManagementFee = model.MonthlyManagementFee;
+            res.TreatMonthlyManagementFeeAsPercent = model.TreatMonthlyManagementFeeAsPercent;
+            res.OtherMonthlyFees = model.OtherMonthlyFees;
+            res.TreatOtherMonthlyFeesAsPercent = model.TreatOtherMonthlyFeesAsPercent;
+            res.AnnualManagementFee = model.AnnualManagementFee;
+            res.TreatAnnualManagementFeeAsPercent = model.TreatAnnualManagementFeeAsPercent;
+            res.OtherAnnualFees = model.OtherAnnualFees;
+            res.TreatOtherAnnualFeesAsPercent = model.TreatOtherAnnualFeesAsPercent;
 
             return res;
         }
+
         private CreditCalculatorResultVM GetResultsForModel(CreditCalcResults res)
         {
             CreditCalculatorResultVM mRes = new CreditCalculatorResultVM();
             mRes.AnnualPercentageRate = res.AnnualPercentageRate;
-            
+
             mRes.TotalFees = res.TotalFees;
             mRes.TotalInstallments = res.TotalInstallments;
             mRes.TotalInstallmentsWithTotalFeesAndRates = res.TotalInstallmentsWithTotalFeesAndRates;
             mRes.TotalRates = res.TotalRates;
             mRes.MonthlyInstallments = new List<MonthlyResultVM>();
 
-            foreach(var m in res.MonthlyInstallments)
+            foreach (var m in res.MonthlyInstallments)
             {
                 MonthlyResultVM mcalc = new MonthlyResultVM();
                 mcalc.Date = m.Date;

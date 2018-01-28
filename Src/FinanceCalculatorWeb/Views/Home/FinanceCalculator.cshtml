@@ -1,4 +1,4 @@
-﻿@model FinanceCalculator.Models.CreditCalculatorVM
+﻿@model FinanceCalculator.Web.ViewModels.CreditCalculatorParamsVM
 @{
     ViewBag.Title = "FinanceCalculator";
 }
@@ -6,24 +6,30 @@
 <h2 class="text-center">Финансов калкулатор</h2>
 <br />
 
-<form method="post" class="mediumForm">
+@using (Ajax.BeginForm("FinanceCalculator", "Home", new AjaxOptions
+    {
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "credit-result",
+        HttpMethod = "POST"
+    }, new { @class = "mediumForm" }))
+{
     <div class="row">
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Размер на кредита</label>
-                @Html.TextBoxFor(m => m.Params.Amount, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.Amount, new { @class = "form-control" })
             </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Срок (месеци)</label>
-                @Html.TextBoxFor(m => m.Params.Period, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.Period, new { @class = "form-control" })
             </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Лихва (%)</label>
-                @Html.TextBoxFor(m => m.Params.Rate, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.Rate, new { @class = "form-control" })
             </div>
         </div>
 
@@ -32,19 +38,19 @@
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Промоционален период (месеци)</label>
-                @Html.TextBoxFor(m => m.Params.PromotionPeriod, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.PromotionPeriod, new { @class = "form-control" })
             </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Промоционална лихва(%)</label>
-                @Html.TextBoxFor(m => m.Params.PromotionRate, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.PromotionRate, new { @class = "form-control" })
             </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Гратисен период (месеци)</label>
-                @Html.TextBoxFor(m => m.Params.GratisPeriod, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.GratisPeriod, new { @class = "form-control" })
             </div>
         </div>
     </div>
@@ -52,9 +58,9 @@
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Вид погасителен план</label>
-                @Html.DropDownListFor(m => m.Params.IsAnnuityInstallments, new SelectList(
+                @Html.DropDownListFor(m => m.IsAnnuityInstallments, new SelectList(
                 new[]
-                {                  
+                {
                     new { Value = "true", Text = "Анюитетни вноски" },
                     new { Value = "false", Text = "Намаляващи вноски" },
                 },
@@ -70,8 +76,8 @@
             <div class="form-group">
                 <label>Такса кандидатстване</label>
                 <div class="input-group">
-                    @Html.TextBoxFor(m => m.Params.ApplicationFee, new { @class = "form-control" })
-                    @Html.DropDownListFor(m => m.Params.TreatApplicationFeeAsPercent, new SelectList(
+                    @Html.TextBoxFor(m => m.ApplicationFee, new { @class = "form-control" })
+                    @Html.DropDownListFor(m => m.TreatApplicationFeeAsPercent, new SelectList(
                 new[]
                 {
                     new { Value = "true", Text = "%" },
@@ -88,8 +94,8 @@
             <div class="form-group">
                 <label>Такса обработка</label>
                 <div class="input-group">
-                    @Html.TextBoxFor(m => m.Params.ProcessingFee, new { @class = "form-control" })
-                    @Html.DropDownListFor(m => m.Params.TreatProcessingFeeAsPercent, new SelectList(
+                    @Html.TextBoxFor(m => m.ProcessingFee, new { @class = "form-control" })
+                    @Html.DropDownListFor(m => m.TreatProcessingFeeAsPercent, new SelectList(
                 new[]
                 {
                     new { Value = "true", Text = "%" },
@@ -106,8 +112,8 @@
             <div class="form-group">
                 <label>Други такси</label>
                 <div class="input-group">
-                    @Html.TextBoxFor(m => m.Params.OtherInitialFees, new { @class = "form-control" })
-                    @Html.DropDownListFor(m => m.Params.TreatOtherInitialFeesAsPercent, new SelectList(
+                    @Html.TextBoxFor(m => m.OtherInitialFees, new { @class = "form-control" })
+                    @Html.DropDownListFor(m => m.TreatOtherInitialFeesAsPercent, new SelectList(
                 new[]
                 {
                     new { Value = "true", Text = "%" },
@@ -127,8 +133,8 @@
             <div class="form-group">
                 <label>Годишна такса управление</label>
                 <div class="input-group">
-                    @Html.TextBoxFor(m => m.Params.AnnualManagementFee, new { @class = "form-control" })
-                    @Html.DropDownListFor(m => m.Params.TreatAnnualManagementFeeAsPercent, new SelectList(
+                    @Html.TextBoxFor(m => m.AnnualManagementFee, new { @class = "form-control" })
+                    @Html.DropDownListFor(m => m.TreatAnnualManagementFeeAsPercent, new SelectList(
                 new[]
                 {
                     new { Value = "true", Text = "%" },
@@ -145,8 +151,8 @@
             <div class="form-group">
                 <label>Други годишни такси</label>
                 <div class="input-group">
-                    @Html.TextBoxFor(m => m.Params.OtherAnnualFees, new { @class = "form-control" })
-                    @Html.DropDownListFor(m => m.Params.TreatOtherAnnualFeesAsPercent, new SelectList(
+                    @Html.TextBoxFor(m => m.OtherAnnualFees, new { @class = "form-control" })
+                    @Html.DropDownListFor(m => m.TreatOtherAnnualFeesAsPercent, new SelectList(
                 new[]
                 {
                     new { Value = "true", Text = "%" },
@@ -158,7 +164,7 @@
                      ), new { @class = "input-group-addon" })
                 </div>
             </div>
-        </div>        
+        </div>
     </div>
 
     <div class="row">
@@ -166,8 +172,8 @@
             <div class="form-group">
                 <label>Месечна такса управление</label>
                 <div class="input-group">
-                    @Html.TextBoxFor(m => m.Params.MonthlyManagementFee, new { @class = "form-control" })
-                    @Html.DropDownListFor(m => m.Params.TreatMonthlyManagementFeeAsPercent, new SelectList(
+                    @Html.TextBoxFor(m => m.MonthlyManagementFee, new { @class = "form-control" })
+                    @Html.DropDownListFor(m => m.TreatMonthlyManagementFeeAsPercent, new SelectList(
                 new[]
                 {
                     new { Value = "true", Text = "%" },
@@ -184,8 +190,8 @@
             <div class="form-group">
                 <label>Други месечни такси</label>
                 <div class="input-group">
-                    @Html.TextBoxFor(m => m.Params.OtherMonthlyFees, new { @class = "form-control" })
-                    @Html.DropDownListFor(m => m.Params.TreatOtherMonthlyFeesAsPercent, new SelectList(
+                    @Html.TextBoxFor(m => m.OtherMonthlyFees, new { @class = "form-control" })
+                    @Html.DropDownListFor(m => m.TreatOtherMonthlyFeesAsPercent, new SelectList(
                 new[]
                 {
                     new { Value = "true", Text = "%" },
@@ -203,48 +209,6 @@
     <div class="form-group center-align-input">
         <input type="submit" value="Изчисли" class="btn btn-primary" />
     </div>
-    @Html.ValidationSummary(true, "", new { @class="text-danger"})
-</form>
-
-@if (Model.Result != null)
-{
-    <ul class="list-group">
-        <li class="list-group-item">ГОДИШЕН ПРОЦЕНТЕН РАЗХОД: @Model.Result.AnnualPercentageRate %</li>
-        <li class="list-group-item">ПОГАСЕНИ С ЛИХВИ И ТАКСИ: @Model.Result.TotalInstallmentsWithTotalFeesAndRates</li>
-        <li class="list-group-item">ТАКСИ И КОМИСИОННИ: @Model.Result.TotalFees</li>
-        <li class="list-group-item">ЛИХВИ:  @Model.Result.TotalRates</li>
-        <li class="list-group-item">ВНОСКИ:  @Model.Result.TotalInstallments</li>
-    </ul>
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>№</th>
-                    <th>Дата</th>
-                    <th>Месечна вноска</th>
-                    <th>Вноска главница</th>
-                    <th>Вноска лихва</th>
-                    <th>Остатък главница</th>
-                    <th>Такси и комисионни</th>
-                    <th>Паричен поток</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @foreach (FinanceCalculator.Models.MonthlyResultVM m in Model.Result.MonthlyInstallments)
-                {
-                    <tr>
-                        <td>@m.RowNumber</td>
-                        <td>@m.Date.ToString("dd.MM.yyyy")</td>
-                        <td>@m.Installment</td>
-                        <td>@m.PrinicpalInstallment</td>
-                        <td>@m.RateInstallment</td>
-                        <td>@m.PrincipalRemainder</td>
-                        <td>@m.Fees</td>
-                        <td>@m.TotalInstallment</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
 }
+
+<div id="credit-result"></div>

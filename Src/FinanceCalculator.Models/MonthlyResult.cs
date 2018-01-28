@@ -8,9 +8,9 @@ namespace FinanceCalculator.Models
         /// Номер на ред №
         /// </summary>
         public int RowNumber { get; set; }
-       /// <summary>
+        /// <summary>
         /// Дата
-       /// </summary>
+        /// </summary>
         public DateTime Date { get; set; }
         /// <summary>
         /// Месечна вноска

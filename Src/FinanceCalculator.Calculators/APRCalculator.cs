@@ -108,7 +108,7 @@ namespace FinanceCalculator.Calculators
             }
         }
 
-        public void AddDecreasingInstalments(decimal amount,decimal interest, int numberOfInstalments, InstalmentFrequency instalmentFrequency, decimal daysAfterFirstAdvancefirstInstalment = 0)
+        public void AddDecreasingInstalments(decimal amount, decimal interest, int numberOfInstalments, InstalmentFrequency instalmentFrequency, decimal daysAfterFirstAdvancefirstInstalment = 0)
         {
             decimal daysBetweenInstalments = getDaysBewteenInstalments(instalmentFrequency);
             if (daysAfterFirstAdvancefirstInstalment == 0)
@@ -121,11 +121,11 @@ namespace FinanceCalculator.Calculators
 
             for (int i = 0; i < numberOfInstalments; i++)
             {
-                 decimal vnoskaLihva = (amount * lihva / 100)/12;
+                decimal vnoskaLihva = (amount * lihva / 100) / 12;
                 decimal finalInst = vnoskaLihva + glavnica;
                 amount = amount - glavnica;
 
-                if (i % 12 == 0 && i < numberOfInstalments -1 && i != 0)
+                if (i % 12 == 0 && i < numberOfInstalments - 1 && i != 0)
                 {
                     finalInst += 5000;
                 }

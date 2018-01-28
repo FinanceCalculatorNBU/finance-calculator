@@ -1,4 +1,4 @@
-﻿@model FinanceCalculator.Models.RefinancingCalculatorVM
+﻿@model FinanceCalculator.Web.ViewModels.RefinancingCalcParamsVM
 @{
     ViewBag.Title = "RefinancingCalculator";
 }
@@ -6,7 +6,13 @@
 <h2 class="text-center">Калкулатор за рефинансиране</h2>
 <br />
 
-<form method="post" class="mediumForm">
+@using (Ajax.BeginForm("RefinancingCalculator", "Home", new AjaxOptions
+    {
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "refinancing-result",
+        HttpMethod = "POST"
+    }, new { @class = "mediumForm" }))
+{
     <div>
         <div class="text-info text-center">
             <h6>Настоящ кредит </h6>
@@ -16,19 +22,19 @@
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Размер на кредита</label>
-                @Html.TextBoxFor(m => m.Params.CurrentCreditAmount, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.CurrentCreditAmount, new { @class = "form-control" })
             </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Лихва (%)</label>
-                @Html.TextBoxFor(m => m.Params.CurrentCreditRate, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.CurrentCreditRate, new { @class = "form-control" })
             </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Срок на кредита (месеци)</label>
-                @Html.TextBoxFor(m => m.Params.CurrentCreditPeriod, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.CurrentCreditPeriod, new { @class = "form-control" })
             </div>
         </div>
     </div>
@@ -37,13 +43,13 @@
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Брой на направените вноски</label>
-                @Html.TextBoxFor(m => m.Params.CurrentCreditMadeInstallments, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.CurrentCreditMadeInstallments, new { @class = "form-control" })
             </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Такса за предсрочно погасяване (%)</label>
-                @Html.TextBoxFor(m => m.Params.CurrentCreditPreTermFee, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.CurrentCreditPreTermFee, new { @class = "form-control" })
             </div>
         </div>
     </div>
@@ -57,19 +63,19 @@
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Лихва</label>
-                @Html.TextBoxFor(m => m.Params.NewCreditRate, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.NewCreditRate, new { @class = "form-control" })
             </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Първоначални такси (%)</label>
-                @Html.TextBoxFor(m => m.Params.NewCreditInitialFeesPercent, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.NewCreditInitialFeesPercent, new { @class = "form-control" })
             </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Първоначални такси (валута)</label>
-                @Html.TextBoxFor(m => m.Params.NewCreditInitialFeesCurrency, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.NewCreditInitialFeesCurrency, new { @class = "form-control" })
             </div>
         </div>
     </div>
@@ -77,73 +83,6 @@
     <div class="form-group center-align-input">
         <input type="submit" value="Изчисли" class="btn btn-primary" />
     </div>
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })    
-</form>
-
-@if (Model.Result != null)
-{
-    
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Резултат</th>
-                    <th>Текущ кредит</th>
-                    <th>Нов кредит</th>
-                    <th>+/- Спестявания</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Лихва</td>
-                    <td>@Model.Result.CurrRate %</td>
-                    <td>@Model.Result.NewRate %</td>
-                    <td></td>                    
-                </tr>
-                <tr>
-                    <td>Срокове на кредитите</td>
-                    <td>@Model.Result.CurrPeriod</td>
-                    <td>@Model.Result.NewPeriod</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Такса за предсрочно погасяване</td>
-                    <td>@Model.Result.CurrPreTermFee</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Месечна вноска</td>
-                    <td>@Model.Result.CurrMonthlyInstallment</td>
-                    <td>@Model.Result.NewMonthlyInstallment</td>
-                    <td>@(Model.Result.CurrMonthlyInstallment - Model.Result.NewMonthlyInstallment)</td>
-                </tr>
-                <tr>
-                    <td>Общо изплатени</td>
-                    <td>@Model.Result.CurrTotalPaid</td>
-                    <td>@Model.Result.NewTotalPaid</td>
-                    <td>@(Model.Result.CurrTotalPaid-Model.Result.NewTotalPaid)</td>
-                </tr>
-                
-            </tbody>
-        </table>
-    </div>
-
-    if (Model.Result.CurrTotalPaid - Model.Result.NewTotalPaid < 0)
-    {
-        <div class="text-center">
-            <div class="col-sm-12 alert alert-danger">
-                Въведените от Вас параметри и последвалото изчисление показват, че избраната от Вас оферта за нов кредит, с която искате да рефинансирате Вашето задължение не е изгодна, тъй като цената на рефинансирането е по-висока от очакваната икономия. Моля, изберете друга оферта и изчислете отново.
-            </div>
-        </div>
-    }
-    else
-    {
-    <div class="text-center">
-        <div class="col-sm-12 alert alert-success">
-            Според въведeните от Вас параметри и последвалото изчисление – има смисъл да рефинансирате вашето задължение, тъй като икономията от рефинансирането е по-висока от цената на настоящото Ви задължение. 
-        </div>
-    </div>   
-   }
-
 }
+
+<div id="refinancing-result"></div>

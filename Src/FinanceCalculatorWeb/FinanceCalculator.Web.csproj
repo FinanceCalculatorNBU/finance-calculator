@@ -151,6 +151,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\CreditCalculatorParamsVM.cs" />
+    <Compile Include="ViewModels\CreditCalculatorResultVM.cs" />
+    <Compile Include="ViewModels\LeasingCalcParamsVM.cs" />
+    <Compile Include="ViewModels\LeasingCalcResultsVM.cs" />
+    <Compile Include="ViewModels\MonthlyResultVM.cs" />
+    <Compile Include="ViewModels\RefinancingCalcParamsVM.cs" />
+    <Compile Include="ViewModels\RefinancingCalcResultsVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -240,10 +247,15 @@
     <Content Include="Views\Home\FinanceCalculator.cshtml" />
     <Content Include="Views\Home\RefinancingCalculator.cshtml" />
     <Content Include="Views\Home\LeasingCalculator.cshtml" />
+    <Content Include="Views\Home\_CreditResultsPartial.cshtml" />
+    <Content Include="Views\Home\_InvalidCreditParamsPartial.cshtml" />
+    <Content Include="Views\Home\_InvalidRefinancingParamsPartial.cshtml" />
+    <Content Include="Views\Home\_InvalidLeasingParamsPartial.cshtml" />
+    <Content Include="Views\Home\_RefinancingResultsPartial.cshtml" />
+    <Content Include="Views\Home\_LeasingResultsPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

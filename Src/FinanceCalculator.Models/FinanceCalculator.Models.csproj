@@ -72,23 +72,13 @@
   <ItemGroup>
     <Compile Include="CreditCalcParams.cs" />
     <Compile Include="CreditCalcResults.cs" />
-    <Compile Include="CreditCalculatorParamsVM.cs" />
-    <Compile Include="CreditCalculatorResultVM.cs" />
-    <Compile Include="CreditCalculatorVM.cs" />
     <Compile Include="Instalment.cs" />
     <Compile Include="LeasingCalcParams.cs" />
-    <Compile Include="LeasingCalcParamsVM.cs" />
     <Compile Include="LeasingCalcResults.cs" />
-    <Compile Include="LeasingCalcResultsVM.cs" />
-    <Compile Include="LeasingCalculatorVM.cs" />
     <Compile Include="MonthlyResult.cs" />
-    <Compile Include="MonthlyResultVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RefinancingCalcParams.cs" />
-    <Compile Include="RefinancingCalcParamsVM.cs" />
     <Compile Include="RefinancingCalcResults.cs" />
-    <Compile Include="RefinancingCalcResultsVM.cs" />
-    <Compile Include="RefinancingCalculatorVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

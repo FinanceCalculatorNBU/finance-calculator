@@ -1,4 +1,4 @@
-﻿@model FinanceCalculator.Models.LeasingCalculatorVM
+﻿@model FinanceCalculator.Web.ViewModels.LeasingCalcParamsVM
 @{
     ViewBag.Title = "LeasingCalculator";
 }
@@ -6,24 +6,30 @@
 <h2 class="text-center">Лизингов калкулатор на Годишния Процент на Разходите</h2>
 <br />
 
-<form method="post" class="mediumForm">
+@using (Ajax.BeginForm("LeasingCalculator", "Home", new AjaxOptions
+    {
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "leasing-result",
+        HttpMethod = "POST"
+    }, new { @class = "mediumForm" }))
+{
     <div class="row">
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Цена на стоката с ДДС</label>
-                @Html.TextBoxFor(m => m.Params.Price, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
             </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Първоначална вноска</label>
-                @Html.TextBoxFor(m => m.Params.InitialInstallment, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.InitialInstallment, new { @class = "form-control" })
             </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Период на лизинга (месеци)</label>
-                @Html.TextBoxFor(m => m.Params.Period, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.Period, new { @class = "form-control" })
             </div>
         </div>
     </div> 
@@ -32,15 +38,15 @@
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Месечна вноска</label>
-                @Html.TextBoxFor(m => m.Params.MonthlyInstallment, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.MonthlyInstallment, new { @class = "form-control" })
             </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">
                 <label>Първоначална такса за обработка</label>
                 <div class="input-group">
-                    @Html.TextBoxFor(m => m.Params.InitialManagementFee, new { @class = "form-control" })
-                    @Html.DropDownListFor(m => m.Params.TreatInitialManagementFeeAsPercent, new SelectList(
+                    @Html.TextBoxFor(m => m.InitialManagementFee, new { @class = "form-control" })
+                    @Html.DropDownListFor(m => m.TreatInitialManagementFeeAsPercent, new SelectList(
                 new[]
                 {
                     new { Value = "true", Text = "%" },
@@ -58,15 +64,6 @@
     <div class="form-group center-align-input">
         <input type="submit" value="Изчисли" class="btn btn-primary" />
     </div>
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-</form>
-
-@if (Model.Result != null)
-{
-     <ul class="list-group">
-        <li class="list-group-item">ГОДИШЕН ПРОЦЕНТЕН РАЗХОД: @Model.Result.AnnualPercentRate %</li>
-        <li class="list-group-item">ОБЩО ИЗПЛАТЕНО С ТАКСИ:  @Model.Result.TotalPaidWithFees BGN</li>
-        <li class="list-group-item">ОБЩО ТАКСИ:  @Model.Result.TotalFees BGN</li>        
-    </ul>
 }
+
+<div id="leasing-result"></div>
