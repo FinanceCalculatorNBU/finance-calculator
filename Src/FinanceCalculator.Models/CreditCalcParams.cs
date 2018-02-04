@@ -1,5 +1,6 @@
 ﻿namespace FinanceCalculator.Models
 {
+    using System.ComponentModel.DataAnnotations;
     public class CreditCalcParams
     {
         /// <summary>
