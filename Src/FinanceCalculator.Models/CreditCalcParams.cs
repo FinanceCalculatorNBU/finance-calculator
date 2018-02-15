@@ -6,14 +6,20 @@
         /// <summary>
         /// Размер на кредита
         /// </summary>
+        [Required]
+        [Range(1, 1000000000)]
         public decimal Amount { get; set; }
         /// <summary>
         /// Срок (месеци)
         /// </summary>
+        [Required]
+        [Range(1, 960)]
         public int Period { get; set; }
         /// <summary>
         /// Лихва (%) 
         /// </summary>
+        [Required]
+        [Range(1, 100)]
         public decimal Rate { get; set; }
         /// <summary>
         /// Промоционален период (месеци) 
