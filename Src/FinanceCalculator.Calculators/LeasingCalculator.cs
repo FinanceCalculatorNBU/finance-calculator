@@ -18,7 +18,7 @@ namespace FinanceCalculator.Calculators
             {
                 aprCalc.AddInstalment(p.MonthlyInstallment.Value, 365.25M / 12M * i);
             }
-            res.AnnualPercentRate = aprCalc.Calculate();
+            res.AnnualPercentRate = Math.Round(aprCalc.Calculate(), 2);
             res.TotalFees = Math.Round(initialFee, 2);
             res.TotalPaidWithFees = Math.Round(p.MonthlyInstallment.Value * p.Period.Value + p.InitialInstallment.Value + res.TotalFees, 2);
             return res;
