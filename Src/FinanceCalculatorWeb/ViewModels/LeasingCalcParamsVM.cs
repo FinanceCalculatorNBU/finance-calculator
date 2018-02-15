@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using System.ComponentModel.DataAnnotations;
 namespace FinanceCalculator.Web.ViewModels
 {
     public class LeasingCalcParamsVM
@@ -35,7 +36,7 @@ namespace FinanceCalculator.Web.ViewModels
 
         public bool IsModelValid(ModelStateDictionary dic)
         {
-            if (!this.Price.HasValue && ((this.Price) <= 100 || (this.Price) >= 100000000))
+            if (!this.Price.HasValue || ((this.Price) <= 100 || (this.Price) >= 100000000))
             {
                 dic.AddModelError("", "Моля въведете размер на цена на стоката по-голям от сто и по-малко от 100 000 000.");
             }
@@ -52,7 +53,11 @@ namespace FinanceCalculator.Web.ViewModels
             {
                 dic.AddModelError("", "Моля въведете коректно число за месечна вноска (по-голямо от нула и по-малко от цената на стоката).");
             }
-            if (this.InitialManagementFee.HasValue)
+            if (!this.InitialManagementFee.HasValue)
+            {
+                dic.AddModelError("", "Моля въведете коректно число за такса кандидатстване.");
+            }
+            else
             {
                 if (this.TreatInitialManagementFeeAsPercent && (this.InitialManagementFee < 0 || this.InitialManagementFee >= 49))
                     dic.AddModelError("", "Моля въведете коректно число за такса кандидатстване.");

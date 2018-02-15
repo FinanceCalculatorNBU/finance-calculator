@@ -32,7 +32,7 @@ namespace FinanceCalculator.Calculators
 
         public void IsParamsValid(LeasingCalcParams Params)
         {
-            if (!Params.Price.HasValue && ((Params.Price) <= 100 || (Params.Price) >= 100000000))
+            if (!Params.Price.HasValue || ((Params.Price) <= 100 || (Params.Price) >= 100000000)) 
             {
                 throw new ArgumentException("Моля въведете размер на цена на стоката по-голям от сто и по-малко от 100 000 000.");
             }
@@ -48,6 +48,10 @@ namespace FinanceCalculator.Calculators
             if (((Params.MonthlyInstallment ?? 0) <= 0) || (Params.MonthlyInstallment >= Params.Price))
             {
                 throw new ArgumentException("Моля въведете коректно число за месечна вноска (по-голямо от нула и по-малко от цената на стоката).");
+            }
+            if (!Params.InitialManagementFee.HasValue)
+            {
+                throw new ArgumentException("Моля въведете коректно число за такса кандидатстване.");
             }
             if (Params.InitialManagementFee.HasValue)
             {
